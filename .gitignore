@@ -1,0 +1,14 @@
+node_modules/
+data/*.db
+data/*.db-shm
+data/*.db-wal
+data/bpost-postcodes.xls
+certs/
+.env.https
+src/daemon/
+npm-debug.log*
+
+# Niet van deze app
+.github/
+.vscode/
+getallen*.xlsx

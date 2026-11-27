@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f7fb" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0f141d" media="(prefers-color-scheme: dark)">
+    <title>Contacten</title>
+    <link rel="stylesheet" href="/vendor/pico/pico.min.css">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Contacten startpagina">
+          <span class="brand-mark" aria-hidden="true">C</span>
+          <span>Contacten</span>
+        </a>
+        <span class="topbar-note">Persoonlijk adresboek</span>
+        <button id="logout-button" class="outline logout-button" type="button">
+          <svg class="logout-icon" aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          Uitloggen
+        </button>
+      </header>
+
+      <main class="content">
+        <section class="page-heading" aria-labelledby="page-title">
+          <div>
+            <p class="eyebrow">ADRESBOEK</p>
+            <h1 id="page-title">Contacten beheren</h1>
+            <p class="description">Bewaar namen en adressen op deze computer.</p>
+          </div>
+          <span class="status-pill" id="database-status" role="status" aria-live="polite">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span id="status-label">Verbinden…</span>
+          </span>
+        </section>
+
+        <p class="sr-only" id="live-region" role="status" aria-live="polite"></p>
+
+        <section class="form-card" aria-labelledby="form-title">
+          <div class="card-heading">
+            <h2 id="form-title">Contact toevoegen</h2>
+          </div>
+          <form id="contact-form" novalidate>
+            <div class="form-grid">
+              <label for="naam">
+                Naam
+                <input id="naam" name="naam" autocomplete="family-name" maxlength="100" required aria-describedby="naam-error">
+                <span class="field-error" id="naam-error" hidden></span>
+              </label>
+              <label for="voornaam">
+                Voornaam
+                <input id="voornaam" name="voornaam" autocomplete="given-name" maxlength="100" required aria-describedby="voornaam-error">
+                <span class="field-error" id="voornaam-error" hidden></span>
+              </label>
+              <label class="address-field" for="adres">
+                Adres
+                <input id="adres" name="adres" autocomplete="street-address" maxlength="300" required aria-describedby="adres-error">
+                <span class="field-error" id="adres-error" hidden></span>
+              </label>
+              <label for="postcode">
+                Postcode
+                <input id="postcode" name="postcode" autocomplete="postal-code" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" aria-describedby="postcode-error">
+                <span class="field-error" id="postcode-error" hidden></span>
+              </label>
+              <label for="plaats">
+                Plaats
+                <select id="plaats" name="plaats" disabled aria-describedby="plaats-error">
+                  <option value="">Vul eerst een postcode in</option>
+                </select>
+                <span class="field-error" id="plaats-error" hidden></span>
+              </label>
+            </div>
+            <div class="form-actions">
+              <button id="submit-button" type="submit">Contact toevoegen</button>
+              <button id="cancel-edit" class="secondary" type="button" hidden>Annuleren</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="records-card" aria-labelledby="table-title">
+          <div class="card-heading">
+            <h2 id="table-title">Opgeslagen contacten</h2>
+            <span class="row-count" id="row-count">Laden…</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Naam</th>
+                  <th scope="col">Voornaam</th>
+                  <th scope="col">Adres</th>
+                  <th scope="col">Postcode</th>
+                  <th scope="col">Plaats</th>
+                  <th class="actions-heading" scope="col">Acties</th>
+                </tr>
+              </thead>
+              <tbody id="records-body">
+                <tr class="skeleton-row">
+                  <td><span class="skeleton-line"></span></td>
+                  <td><span class="skeleton-line is-short"></span></td>
+                  <td><span class="skeleton-line"></span></td>
+                  <td><span class="skeleton-line is-short"></span></td>
+                  <td><span class="skeleton-line is-short"></span></td>
+                  <td><span class="skeleton-line is-short"></span></td>
+                </tr>
+                <tr class="skeleton-row">
+                  <td><span class="skeleton-line"></span></td>
+                  <td><span class="skeleton-line is-short"></span></td>
+                  <td><span class="skeleton-line"></span></td>
+                  <td><span class="skeleton-line is-short"></span></td>
+                  <td><span class="skeleton-line is-short"></span></td>
+                  <td><span class="skeleton-line is-short"></span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-message" id="table-message" role="status" hidden></div>
+        </section>
+      </main>
+
+      <footer class="footer">Contacten <span aria-hidden="true">·</span> Lokale SQLite-database</footer>
+    </div>
+
+    <dialog class="confirm-dialog" id="confirm-dialog" aria-labelledby="confirm-title">
+      <form method="dialog">
+        <h2 id="confirm-title">Contact verwijderen</h2>
+        <p id="confirm-text">Weet je zeker dat je dit contact wilt verwijderen?</p>
+        <div class="dialog-actions">
+          <button class="secondary" value="cancel" type="submit">Annuleren</button>
+          <button class="danger" value="confirm" type="submit">Verwijderen</button>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>

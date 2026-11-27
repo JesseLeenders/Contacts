@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f7fb" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0f141d" media="(prefers-color-scheme: dark)">
+    <title>Inloggen · Contacten</title>
+    <link rel="stylesheet" href="/vendor/pico/pico.min.css">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/login.js" defer></script>
+  </head>
+  <body>
+    <main class="login-shell">
+      <section class="form-card login-card" aria-labelledby="login-title">
+        <div class="login-brand">
+          <span class="brand-mark" aria-hidden="true">C</span>
+          <div>
+            <p class="eyebrow">ADRESBOEK</p>
+            <h1 id="login-title">Inloggen</h1>
+          </div>
+        </div>
+        <form id="login-form" novalidate>
+          <label for="password">
+            Wachtwoord
+            <input id="password" name="password" type="password" autocomplete="current-password" required aria-describedby="login-message">
+          </label>
+          <div class="form-actions">
+            <button id="login-button" type="submit">Inloggen</button>
+          </div>
+        </form>
+        <p class="login-message" id="login-message" role="status" aria-live="polite" hidden></p>
+      </section>
+    </main>
+  </body>
+</html>

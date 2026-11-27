@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: contacten
+    runtime: node
+    plan: starter
+    buildCommand: npm ci && npm rebuild better-sqlite3
+    startCommand: npm start
+    healthCheckPath: /login
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: DB_PATH
+        value: /data/contacts.db
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: APP_PASSWORD
+        sync: false
+    disk:
+      name: contacten-data
+      mountPath: /data
+      sizeGB: 1

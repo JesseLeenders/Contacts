@@ -1,0 +1,32 @@
+{
+  "name": "jesse-records",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Express app showing example records from SQLite.",
+  "main": "src/app.js",
+  "scripts": {
+    "build": "node --check src/app.js && node --check src/auth.js && node --check public/app.js && node --check public/login.js && node --check scripts/sync-bpost-postcodes.js && node --check scripts/set-password.js && node --check scripts/make-cert.js && node --check scripts/harden-permissions.js && node --check scripts/security-log.js && node --check scripts/set-password-env.js",
+    "start": "node --env-file-if-exists=.env.https src/app.js",
+    "start:https": "node --env-file-if-exists=.env.https src/app.js",
+    "make-cert": "node scripts/make-cert.js",
+    "harden-permissions": "node scripts/harden-permissions.js",
+    "security-log": "node scripts/security-log.js",
+    "set-password": "node scripts/set-password.js",
+    "set-password:env": "node scripts/set-password-env.js",
+    "sync-postcodes": "node scripts/sync-bpost-postcodes.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "dependencies": {
+    "@e965/xlsx": "^0.20.3",
+    "@picocss/pico": "^2.1.1",
+    "better-sqlite3": "^12.4.1",
+    "express": "^5.1.0",
+    "selfsigned": "^5.5.0"
+  },
+  "optionalDependencies": {
+    "node-windows": "^1.0.0-beta.8"
+  }
+}
