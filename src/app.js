@@ -117,6 +117,16 @@ function openDatabase(dbPath = process.env.DB_PATH || './data/contacts.db') {
   return initializeDatabase(new Database(resolvedPath));
 }
 
+function initializeConfiguredPassword(database, password = process.env.APP_PASSWORD) {
+  if (typeof password !== 'string' || password.length === 0 || auth.hasPassword(database)) {
+    return false;
+  }
+
+  auth.setPassword(database, password);
+  auth.logSecurityEvent(database, { event: 'password_initialized', ip: 'system' });
+  return true;
+}
+
 function validateContact(body) {
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
     return { error: 'Vul alle contactgegevens in.' };
@@ -529,7 +539,23 @@ if (require.main === module) {
   // Op een host zonder certificaat (zoals Render) moet de app op alle interfaces luisteren.
   const host = process.env.HOST || (hasCertificates ? '127.0.0.1' : '0.0.0.0');
 
-  const { server, secure } = createServer(createApp());
+  const database = openDatabase();
+  if (process.env.APP_PASSWORD) {
+    try {
+      const initialized = initializeConfiguredPassword(database);
+      console.log(initialized
+        ? 'Initiële APP_PASSWORD als scrypt-hash opgeslagen.'
+        : 'Wachtwoord bestaat al; APP_PASSWORD niet gebruikt.');
+    } catch (error) {
+      console.error(`APP_PASSWORD instellen mislukt: ${error.message}`);
+      database.close();
+      process.exit(1);
+    } finally {
+      delete process.env.APP_PASSWORD;
+    }
+  }
+
+  const { server, secure } = createServer(createApp({ database }));
 
   server.on('error', (error) => {
     if (error.code === 'EADDRINUSE') {
@@ -568,6 +594,7 @@ module.exports = {
   loadTlsCertificate,
   tlsCertificatesAvailable,
   initializeDatabase,
+  initializeConfiguredPassword,
   openDatabase,
   validateContact,
 };

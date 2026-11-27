@@ -92,20 +92,23 @@ Omgevingsvariabelen:
 | `DB_PATH` | `/data/contacts.db` |
 | `COOKIE_SECURE` | `true` |
 | `ALLOWED_HOSTS` | je Render-domein, bijv. `contacten.onrender.com` |
-| `APP_PASSWORD` | eenmalig, voor het instellen van het wachtwoord |
+| `APP_PASSWORD` | eenmalig, voor de eerste serverstart |
 
 Zonder certificaat start de app in **HTTP-modus**, want Render termineert TLS bij
 de load balancer. Lokaal blijft HTTPS verplicht zodra `certs/` bestaat.
 
-Wachtwoord instellen in de Render-shell (de gewone `npm run set-password` vraagt
-om een TTY en werkt daar niet):
+Je hebt geen Render Shell nodig om het wachtwoord in te stellen. Zet `APP_PASSWORD`
+in de Environment-instellingen van Render op een sterk wachtwoord van minstens
+12 tekens (aanbevolen: 20+), en deploy/redeploy de service. Bij de eerste start
+wordt dit automatisch als scrypt-hash opgeslagen in `/data/contacts.db`.
+Daarna mag je `APP_PASSWORD` verwijderen uit de Render-omgevingsvariabelen en
+opnieuw deployen. Een bestaande hash wordt nooit door deze bootstrap overschreven.
 
-```sh
-APP_PASSWORD='een-lang-genoeg-wachtwoord' npm run set-password:env
-```
-
-Verwijder `APP_PASSWORD` daarna uit de omgevingsvariabelen; het script is alleen
-nodig bij de eerste keer of bij een wachtwoordwijziging.
+Om later bewust een wachtwoord te wijzigen, gebruik je `npm run set-password`
+in een lokale terminal met toegang tot dezelfde database, of stel je tijdelijk
+`APP_PASSWORD` in en verwijder eerst de bestaande `password_hash`-rij via een
+beveiligde databasebeheeractie. De automatische bootstrap verandert een reeds
+ingesteld wachtwoord niet.
 
 **Let op:** de persistent disk is nodig, anders is de database bij elke deploy
 leeg. Op de gratis tier van Render bestaat geen persistent disk.

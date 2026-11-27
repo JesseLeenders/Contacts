@@ -279,6 +279,26 @@ test('expired sessions are refused and removed from the database', async (t) => 
   );
 });
 
+test('APP_PASSWORD initializes the password once without overwriting existing credentials', async (t) => {
+  const { initializeConfiguredPassword } = require('../src/app');
+  const database = initializeDatabase(new Database(':memory:'));
+  t.after(() => database.close());
+
+  assert.equal(initializeConfiguredPassword(database, ''), false);
+  assert.equal(auth.hasPassword(database), false);
+
+  assert.equal(initializeConfiguredPassword(database, TEST_PASSWORD), true);
+  const firstHash = auth.getPasswordHash(database);
+  assert.match(firstHash, /^scrypt\$/);
+  assert.equal(await auth.verifyPassword(TEST_PASSWORD, firstHash), true);
+
+  auth.createSession(database);
+  assert.equal(initializeConfiguredPassword(database, 'another-valid-password'), false);
+  assert.equal(auth.getPasswordHash(database), firstHash);
+  assert.equal(database.prepare('SELECT COUNT(*) AS count FROM sessions').get().count, 1);
+  assert.ok(auth.listSecurityEvents(database).some((event) => event.event === 'password_initialized'));
+});
+
 test('login reports when no password has been configured yet', async (t) => {
   const { baseUrl } = await startTestServer(t);
 
